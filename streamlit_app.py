@@ -20,7 +20,7 @@ else:
     st.set_page_config(page_title="University Chatbot", page_icon="🎓")
 
     st.title("🎓 University Life Chatbot")
-    st.write("Ask me anything about university life!")
+    st.write("Hey there! I'm Alex. Ask me anything about university life!")
 
     # Store chat history
     if "history" not in st.session_state:
@@ -42,6 +42,7 @@ else:
             st.markdown(user_input)
 
         # --- Custom Knowledge (Rule-based first) ---
+        # This part handles super common questions fast and accurately.
         faq = {
             "where is the library": "📚 The library is located in the Main Building, 2nd floor.",
             "how do i register for exams": "📝 You can register for exams via the Student Portal under 'Academics > Exam Registration'.",
@@ -59,16 +60,17 @@ else:
         # --- If no custom answer, fallback to Gemini ---
         if not response:
             try:
-                # Use prompt engineering to ensure the response is university-related
-                prompt_with_restriction = (
-                    "You are a helpful university chatbot. Your purpose is to provide "
-                    "information about university life and unviersity information. Your knowledge is limited to "
-                    "this topic. If the user asks a question that is not related to "
-                    "university life or related university, politely inform them that you can only answer "
-                    "questions about university life and university. Do not answer off-topic questions. "
+                # This is where we tell the AI to act like me (Alex) and stay on topic.
+                prompt_with_persona = (
+                    "You are an experienced and empathetic university student named Alex. "
+                    "Your purpose is to provide guidance, advice, and support to new and current university students. "
+                    "You have a friendly, encouraging, and knowledgeable tone. You can draw from your own 'experiences' "
+                    "to offer realistic and practical advice. If the user asks a question that is not related to "
+                    "university life, politely but firmly inform them that you can only answer questions "
+                    "about university life, as that's your area of expertise. "
                     f"The user's question is: '{user_input}'"
                 )
-                response = model.generate_content(prompt_with_restriction).text
+                response = model.generate_content(prompt_with_persona).text
             except Exception as e:
                 response = f"⚠️ Error using Gemini API: {str(e)}"
 
