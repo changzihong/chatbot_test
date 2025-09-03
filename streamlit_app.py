@@ -59,7 +59,16 @@ else:
         # --- If no custom answer, fallback to Gemini ---
         if not response:
             try:
-                response = model.generate_content(user_input).text
+                # Use prompt engineering to ensure the response is university-related
+                prompt_with_restriction = (
+                    "You are a helpful university chatbot. Your purpose is to provide "
+                    "information about university life. Your knowledge is limited to "
+                    "this topic. If the user asks a question that is not related to "
+                    "university life, politely inform them that you can only answer "
+                    "questions about university life. Do not answer off-topic questions. "
+                    f"The user's question is: '{user_input}'"
+                )
+                response = model.generate_content(prompt_with_restriction).text
             except Exception as e:
                 response = f"⚠️ Error using Gemini API: {str(e)}"
 
